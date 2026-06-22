@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/likes/(.*)", "dest": "/api/app?path=api/likes/$1" },
+    { "src": "/api/likes", "dest": "/api/app?path=api/likes" },
+    { "src": "/api/palettes", "dest": "/api/app?path=api/palettes" },
+    { "src": "/palette/(.*)", "dest": "/api/app?path=palette/$1" },
+    { "src": "/category/(.*)", "dest": "/api/app?path=category/$1" },
+    { "src": "/season/(.*)", "dest": "/api/app?path=season/$1" },
+    { "src": "/seasonal/(.*)", "dest": "/api/app?path=seasonal/$1" },
+    { "src": "/collection", "dest": "/api/app?path=collection" },
+    { "src": "/sitemap.xml", "dest": "/api/app?path=sitemap.xml" },
+    { "src": "/", "dest": "/api/app?path=" }
+  ]
+}
