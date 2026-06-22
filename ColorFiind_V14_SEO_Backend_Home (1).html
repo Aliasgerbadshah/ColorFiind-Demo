@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ColorFiind</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff4d6d%22/%3E%3Cstop%20offset%3D%220.25%22%20stop-color%3D%22%23ffd166%22/%3E%3Cstop%20offset%3D%220.5%22%20stop-color%3D%22%2306d6a0%22/%3E%3Cstop%20offset%3D%220.75%22%20stop-color%3D%22%23118ab2%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%239b5de5%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2218%22%20fill%3D%22%23ffffff%22/%3E%3Cpath%20d%3D%22M46.5%2043.4C42.8%2047.2%2037.8%2049%2032.2%2049%2021.6%2049%2014%2041.7%2014%2032.1S21.7%2015%2032.4%2015c5.8%200%2010.7%202%2014.1%205.6l-5.1%205.4c-2.4-2.6-5.3-3.8-8.6-3.8-6.1%200-10.3%204.1-10.3%209.9s4.2%209.9%2010.3%209.9c3.3%200%206.2-1.2%208.6-3.9l5.1%205.3z%22%20fill%3D%22url%28%23g%29%22/%3E%3C/svg%3E">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#ffffff;
+--card:#ffffff;
+--text:#111111;
+--muted:#777777;
+--border:#ececec;
+--hover:#f7f7f7;
+--active:#efefef;
+}
+
+[data-theme="dark"]{
+--bg:#111111;
+--card:#1b1b1b;
+--text:#ffffff;
+--muted:#a1a1a1;
+--border:#2b2b2b;
+--hover:#222222;
+--active:#2c2c2c;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+background:var(--bg);
+color:var(--text);
+overflow-x:hidden;
+transition:.25s;
+}
+
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+background:#d9d9d9;
+border-radius:100px;
+}
+
+/* SIDEBAR - SAME V8 LOOK */
+.sidebar{
+position:fixed;
+left:0;
+top:0;
+width:250px;
+height:100vh;
+background:var(--card);
+border-right:1px solid var(--border);
+padding:24px;
+overflow-y:auto;
+z-index:100;
+}
+
+.logo{
+font-size:30px;
+font-weight:800;
+margin-bottom:16px;
+display:inline-flex;
+align-items:center;
+gap:0;
+letter-spacing:-1px;
+text-decoration:none;
+}
+
+.logo span{
+display:inline-block;
+}
+
+.brand-color .lc{color:#FF4D6D;}
+.brand-color .lo1{color:#FFB703;}
+.brand-color .ll{color:#06D6A0;}
+.brand-color .lo2{color:#118AB2;}
+.brand-color .lr{color:#9B5DE5;}
+.brand-fiind{color:#111111;}
+[data-theme="dark"] .brand-fiind{color:#ffffff;}
+
+.theme-toggle{
+display:flex;
+align-items:center;
+justify-content:center;
+padding:12px;
+background:var(--hover);
+border-radius:12px;
+cursor:pointer;
+font-size:14px;
+font-weight:600;
+margin-bottom:22px;
+transition:.2s;
+user-select:none;
+}
+
+.theme-toggle:hover{
+transform:translateY(-2px);
+}
+
+.nav{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.nav-item{
+display:flex;
+align-items:center;
+gap:12px;
+padding:14px 16px;
+border-radius:14px;
+cursor:pointer;
+transition:.2s;
+font-size:15px;
+font-weight:500;
+color:var(--muted);
+user-select:none;
+}
+
+.nav-item:hover{
+background:var(--hover);
+color:var(--text);
+}
+
+.nav-item.active{
+background:var(--active);
+color:var(--text);
+}
+
+.divider{
+height:1px;
+background:var(--border);
+margin:20px 0;
+}
+
+.categories{
+display:flex;
+flex-direction:column;
+}
+
+.category{
+padding:10px 0;
+font-size:14px;
+cursor:pointer;
+color:var(--muted);
+transition:.2s;
+user-select:none;
+}
+
+.category:hover{
+color:var(--text);
+}
+
+.category.active{
+font-weight:600;
+color:var(--text);
+}
+
+/* MAIN - SAME V8 LOOK */
+.main{
+margin-left:250px;
+padding:24px;
+}
+
+.topbar{
+position:sticky;
+top:0;
+background:var(--bg);
+padding-bottom:18px;
+z-index:50;
+}
+
+.search{
+width:100%;
+padding:15px 18px;
+border:1px solid var(--border);
+border-radius:999px;
+background:var(--card);
+color:var(--text);
+outline:none;
+font-size:14px;
+}
+
+.search::placeholder{
+color:var(--muted);
+}
+
+
+.results-meta{margin-top:10px;font-size:13px;font-weight:600;color:var(--muted)}.ad-slot{grid-column:1/-1;min-height:92px;border:1px dashed var(--border);border-radius:18px;background:linear-gradient(135deg,var(--hover),var(--card));color:var(--muted);display:flex;align-items:center;justify-content:center;text-align:center;font-size:13px;font-weight:700;letter-spacing:.2px;margin-bottom:24px}.grid .ad-slot{margin:0;min-height:120px}.copy-toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);background:#111;color:#fff;padding:12px 16px;border-radius:999px;font-size:14px;font-weight:700;box-shadow:0 12px 40px rgba(0,0,0,.22);z-index:2000;opacity:0;pointer-events:none;transition:.25s}.copy-toast.show{opacity:1;transform:translate(-50%,0)}.copied-pulse{animation:copyPulse .55s ease}@keyframes copyPulse{0%{transform:scale(1)}45%{transform:scale(1.16)}100%{transform:scale(1)}}.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:90;opacity:0;transition:.25s}.sidebar-backdrop.show{display:block;opacity:1}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:24px;
+}
+
+/* CARD - SAME V8 LOOK */
+.card{
+cursor:pointer;
+transform:translateY(0);
+transition:.25s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+}
+
+.palette{
+height:290px;
+border-radius:18px;
+overflow:hidden;
+display:grid;
+grid-template-columns:1fr 1fr 1fr 1fr;
+transition:grid-template-columns .7s cubic-bezier(.25,.8,.25,1);
+background:var(--hover);
+}
+
+.color{
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+position:relative;
+}
+
+.color span{
+opacity:0;
+transform:translateY(12px);
+transition:.4s;
+font-size:13px;
+font-weight:700;
+color:#fff;
+mix-blend-mode:difference;
+letter-spacing:.2px;
+}
+
+.color:hover span{
+opacity:1;
+transform:translateY(0);
+}
+
+/* V8 PERFECT 40% EXPANSION */
+.palette:has(.c1:hover){
+grid-template-columns:1.6fr .8fr .8fr .8fr;
+}
+
+.palette:has(.c2:hover){
+grid-template-columns:.8fr 1.6fr .8fr .8fr;
+}
+
+.palette:has(.c3:hover){
+grid-template-columns:.8fr .8fr 1.6fr .8fr;
+}
+
+.palette:has(.c4:hover){
+grid-template-columns:.8fr .8fr .8fr 1.6fr;
+}
+
+.info{
+padding-top:12px;
+}
+
+.name{
+font-size:14px;
+font-weight:600;
+margin-bottom:8px;
+}
+
+.actions{
+display:flex;
+align-items:center;
+gap:18px;
+color:var(--text);
+}
+
+.actions span{
+display:flex;
+align-items:center;
+gap:6px;
+cursor:pointer;
+transition:.2s;
+font-size:14px;
+color:var(--text);
+}
+
+.actions span:hover{
+transform:scale(1.08);
+}
+
+.icon{
+width:18px;
+height:18px;
+stroke:currentColor;
+stroke-width:2;
+fill:none;
+}
+
+.favorite.active .icon{
+fill:currentColor;
+}
+
+.empty{
+grid-column:1/-1;
+padding:60px 20px;
+text-align:center;
+color:var(--muted);
+font-size:14px;
+font-weight:600;
+}
+
+/* LOADER */
+#loader{
+text-align:center;
+padding:40px;
+font-size:14px;
+font-weight:600;
+color:var(--muted);
+display:none;
+}
+
+/* MOBILE */
+.mobile-toggle{
+display:none;
+position:fixed;
+left:15px;
+top:15px;
+z-index:999;
+background:var(--card);
+color:var(--text);
+border:1px solid var(--border);
+padding:10px 12px;
+border-radius:10px;
+cursor:pointer;
+}
+
+@media(max-width:1400px){
+.grid{
+grid-template-columns:repeat(3,1fr);
+}
+}
+
+@media(max-width:1000px){
+body.sidebar-open{overflow:hidden}.sidebar{transform:translateX(-100%);transition:.3s;box-shadow:20px 0 60px rgba(0,0,0,.18)}.sidebar.show{transform:translateX(0)}.mobile-toggle{display:block}.main{margin-left:0;padding:70px 16px 24px}.topbar{backdrop-filter:blur(14px)}.grid{grid-template-columns:repeat(2,1fr);gap:18px}.palette{height:240px}}
+
+@media(max-width:700px){.grid{grid-template-columns:1fr;gap:22px}.palette{height:280px}.logo{font-size:28px}.search{padding:14px 16px}.copy-toast{width:calc(100% - 32px);text-align:center}}
+</style>
+</head>
+
+<body>
+
+<div class="mobile-toggle" onclick="toggleSidebar()">☰</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+
+<a href="/" class="logo" aria-label="ColorFiind home"><span class="brand-color"><span class="lc">C</span><span class="lo1">o</span><span class="ll">l</span><span class="lo2">o</span><span class="lr">r</span></span><span class="brand-fiind">Fiind</span></a>
+
+<div class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</div>
+
+<div class="nav">
+<div class="nav-item active" onclick="setActiveNav(this);showAll()">✦ New</div>
+<div class="nav-item" onclick="setActiveNav(this);sortPopular()">◉ Popular</div>
+<div class="nav-item" onclick="setActiveNav(this);shufflePalettes()">◎ Random</div>
+<div class="nav-item" onclick="setActiveNav(this);showFavorites()">♥ Collection</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="categories">
+<div class="category active" onclick="filterCategory('all',this)">All</div>
+<div class="category" onclick="filterCategory('Pastel',this)">Pastel</div>
+<div class="category" onclick="filterCategory('Vintage',this)">Vintage</div>
+<div class="category" onclick="filterCategory('Luxury',this)">Luxury</div>
+<div class="category" onclick="filterCategory('Retro',this)">Retro</div>
+<div class="category" onclick="filterCategory('Neon',this)">Neon</div>
+<div class="category" onclick="filterCategory('Dark',this)">Dark</div>
+<div class="category" onclick="filterCategory('Light',this)">Light</div>
+</div>
+
+<div class="divider"></div>
+<div class="categories">
+<div class="category" style="font-weight:700;color:var(--text);cursor:default">Seasonal Colors</div>
+<a class="category" href="/seasonal/soft-autumn-color-palette">Soft Autumn</a>
+<a class="category" href="/seasonal/soft-summer-color-palette">Soft Summer</a>
+<a class="category" href="/seasonal/deep-autumn-color-palette">Deep Autumn</a>
+<a class="category" href="/seasonal/deep-winter-color-palette">Deep Winter</a>
+<a class="category" href="/seasonal/light-spring-color-palette">Light Spring</a>
+<a class="category" href="/seasonal/light-summer-color-palette">Light Summer</a>
+<a class="category" href="/seasonal/warm-autumn-color-palette">Warm Autumn</a>
+<a class="category" href="/seasonal/true-spring-color-palette">True Spring</a>
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<input class="search" id="search" placeholder="Search palettes...">
+<div class="results-meta" id="resultsMeta">Showing palettes</div>
+</div>
+
+<div class="ad-slot">Advertisement Space — responsive banner ad placeholder</div>
+<div class="grid" id="grid"></div>
+<div id="loader">Loading More Palettes...</div>
+
+</div>
+<div class="copy-toast" id="copyToast">Copied</div>
+
+<script>
+/* ==========================================
+COLORFIIND V10 CORRECTED WITH V8 LOOK
+========================================== */
+
+/* ==========================================
+COLORFIIND V12 LARGE CURATED-STYLE PALETTE ENGINE
+Goal: 1000 palettes per category without tiny HEX-only variations.
+Method:
+- No simple random generation.
+- Category-specific recipe groups.
+- Golden-angle hue spacing for strong visual separation.
+- Different palette structures/concepts per recipe.
+- Name generator with real words, no numbers.
+- Signature filter to avoid near-identical palette structures.
+========================================== */
+
+const categories = ["Pastel","Vintage","Luxury","Retro","Neon","Dark","Light"];
+const PALETTES_PER_CATEGORY = 1000;
+
+function clamp(value,min,max){
+return Math.max(min,Math.min(max,value));
+}
+
+function seeded(seed){
+const x = Math.sin(seed * 999.917) * 10000;
+return x - Math.floor(x);
+}
+
+function pick(arr,seed){
+return arr[Math.floor(seeded(seed) * arr.length) % arr.length];
+}
+
+function slugify(text){
+return text.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+function hslToHex(h,s,l){
+h = ((h % 360) + 360) % 360;
+s = clamp(s,0,100) / 100;
+l = clamp(l,0,100) / 100;
+const k = n => (n + h / 30) % 12;
+const a = s * Math.min(l,1-l);
+const f = n => l - a * Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));
+const toHex = x => Math.round(255*x).toString(16).padStart(2,'0');
+return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`.toUpperCase();
+}
+
+function hexToRgb(hex){
+const clean = hex.replace('#','');
+return {
+r:parseInt(clean.slice(0,2),16) / 255,
+g:parseInt(clean.slice(2,4),16) / 255,
+b:parseInt(clean.slice(4,6),16) / 255
+};
+}
+
+function rgbToHsl(hex){
+let {r,g,b} = hexToRgb(hex);
+const max = Math.max(r,g,b);
+const min = Math.min(r,g,b);
+let h = 0;
+let s = 0;
+const l = (max + min) / 2;
+if(max !== min){
+const d = max - min;
+s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+switch(max){
+case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+case g: h = (b - r) / d + 2; break;
+case b: h = (r - g) / d + 4; break;
+}
+h *= 60;
+}
+return {h,s,l};
+}
+
+function paletteSignature(colors){
+/* sorted HSL buckets catch palettes that only differ by very small HEX tweaks */
+return colors.map(color=>{
+const hsl = rgbToHsl(color);
+const hb = Math.round(hsl.h / 3);
+const sb = Math.round(hsl.s * 20);
+const lb = Math.round(hsl.l * 20);
+return `${hb}:${sb}:${lb}`;
+}).sort().join('|');
+}
+
+function pivotRgb(n){
+return n > 0.04045 ? Math.pow((n + 0.055) / 1.055, 2.4) : n / 12.92;
+}
+
+function pivotXyz(n){
+return n > 0.008856 ? Math.cbrt(n) : (7.787 * n) + (16 / 116);
+}
+
+function hexToLab(hex){
+const rgb = hexToRgb(hex);
+const r = pivotRgb(rgb.r);
+const g = pivotRgb(rgb.g);
+const b = pivotRgb(rgb.b);
+let x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+let y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+let z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+x = pivotXyz(x);
+y = pivotXyz(y);
+z = pivotXyz(z);
+return {l:(116 * y) - 16,a:500 * (x - y),b:200 * (y - z)};
+}
+
+function deltaE(hex1,hex2){
+const a = hexToLab(hex1);
+const b = hexToLab(hex2);
+return Math.sqrt(Math.pow(a.l-b.l,2)+Math.pow(a.a-b.a,2)+Math.pow(a.b-b.b,2));
+}
+
+function sortedByHue(colors){
+return [...colors].sort((a,b)=>rgbToHsl(a).h-rgbToHsl(b).h);
+}
+
+function sortedByLightness(colors){
+return [...colors].sort((a,b)=>rgbToHsl(a).l-rgbToHsl(b).l);
+}
+
+function averageDelta(colorsA,colorsB){
+let total = 0;
+for(let i=0;i<4;i++) total += deltaE(colorsA[i],colorsB[i]);
+return total / 4;
+}
+
+function paletteVisualDistance(p1,p2){
+const direct = averageDelta(p1.colors,p2.colors);
+const reversed = averageDelta(p1.colors,[...p2.colors].reverse());
+const hueSorted = averageDelta(sortedByHue(p1.colors),sortedByHue(p2.colors));
+const lightSorted = averageDelta(sortedByLightness(p1.colors),sortedByLightness(p2.colors));
+return Math.min(direct,reversed,hueSorted,lightSorted);
+}
+
+function hueDistance(a,b){
+const diff = Math.abs(a-b) % 360;
+return Math.min(diff,360-diff) / 180;
+}
+
+function paletteFeatures(palette){
+if(!palette._features){
+palette._features = sortedByHue(palette.colors).map(color=>rgbToHsl(color));
+}
+return palette._features;
+}
+
+function fastPaletteDistance(p1,p2){
+const a = paletteFeatures(p1);
+const b = paletteFeatures(p2);
+let total = 0;
+for(let i=0;i<4;i++){
+total += hueDistance(a[i].h,b[i].h) * 42;
+total += Math.abs(a[i].s-b[i].s) * 38;
+total += Math.abs(a[i].l-b[i].l) * 52;
+}
+return total / 4;
+}
+
+function isPaletteTooSimilar(candidate,pool,threshold=13){
+paletteFeatures(candidate);
+return pool.some(existing => fastPaletteDistance(candidate,existing) < threshold);
+}
+
+
+const nameWords = {
+Pastel:{
+a:["Apricot","Lavender","Peach","Mint","Bubblegum","Lemon","Powder","Cherry","Pistachio","Cloudberry","Seafoam","Vanilla","Blush","Cotton","Rose","Lilac","Mochi","Sorbet","Honeydew","Petal","Pearl","Macaron","Dewdrop","Melon","Buttercup","Marshmallow","Sky","Cream","Daisy","Bloom"],
+b:["Meadow","Milk","Mochi","Porcelain","Sky","Sorbet","Lagoon","Tea","Garden","Cream","Whisper","Horizon","Cloud","Dream","Mist","Breeze","Glow","Petal","Sunday","Morning","Ribbon","Velvet","Rain","Sugar","Shell","Nectar","Field","Muse","Pasture","Halo"],
+c:["Bloom","Haze","Aura","Dawn","Daydream","Waltz","Lullaby","Mirage","Nest","Story","Canvas","Wish","Drift","Song","Charm","Glow","Muse","Sprout","Spring","Feather"]
+},
+Vintage:{
+a:["Old","Rustic","Sepia","Antique","Dusty","Coffee","Olive","Heritage","Classic","Muted","Brownstone","Walnut","Copper","Faded","Amber","Cedar","Tobacco","Ochre","Terracotta","Sage","Archive","Retro","Manor","Parchment","Brass","Maple","Umber","Canvas","Museum","Prairie"],
+b:["Bookstore","Canyon","Garden","Rosewood","Typewriter","Archive","Attic","Quilt","Manor","Carnival","Morning","Library","Museum","Postcard","Gramophone","Journal","Cabin","Market","Paper","Studio","Album","Road","Letter","Workshop","Den","Parlor","Courtyard","Lantern","Orchard","Gallery"],
+c:["Memoir","Patina","Chapter","Keepsake","Heirloom","Tale","Era","Relic","Fable","Dust","Echo","Manuscript","Portrait","Stillness","Archive","Sunday","Heritage","Record","Cabinet","Craft"]
+},
+Luxury:{
+a:["Black","Emerald","Royal","Sapphire","Champagne","Ruby","Ivory","Midnight","Velvet","Golden","Imperial","Pearl","Bronze","Obsidian","Platinum","Jade","Caviar","Orchid","Diamond","Crown","Silk","Noir","Opal","Regal","Majestic","Marble","Gilded","Onyx","Prestige","Estate"],
+b:["Velvet","Crown","Amethyst","Estate","Noir","Opera","Palace","Pearl","Peacock","Orchid","Jade","Tuxedo","Cathedral","Rose","Wine","Cream","Gallery","Ballroom","Monarch","Salon","Empress","Manor","Atelier","Chateau","Fountain","Crest","Temple","Lounge","Suite","Couture"],
+c:["Gold","Aura","Elegance","Legacy","Couture","Nocturne","Lustre","Gala","Treasure","Dynasty","Ceremony","Crown","Signature","Radiance","Opulence","Velvet","Prestige","Pearl","Empire","Glory"]
+},
+Retro:{
+a:["Arcade","Miami","Disco","Soda","Funky","Vintage","Sunset","Groovy","Pop","Analog","Mod","Orange","Roller","Boogie","Pixel","Cassette","Neon","Diner","Tropical","Comic","Vinyl","Retro","Jukebox","Motel","Surf","Carnival","Fizzy","Electric","Saturday","Polaroid"],
+b:["Pop","Roller","Sunset","Fountain","Cassette","Arcade","Diner","Picnic","Wall","Summer","Furniture","Vinyl","Disco","Night","Gamepad","Signal","Wave","Poster","Parade","Booth","Radio","Skate","Drive","Stage","Beach","Record","Cabana","Dance","Street","Cinema"],
+c:["Flashback","Groove","Rewind","Jam","Fever","Beat","Splash","Spin","Remix","Vibe","Flicker","Arcade","Boogie","Dream","Circuit","Poster","Mambo","Stereo","Roll","Classic"]
+},
+Neon:{
+a:["Cyber","Laser","Electric","Neon","Digital","Plasma","Future","Acid","Glitch","Ultraviolet","Circuit","Hologram","Toxic","Radioactive","Night","Chrome","Pixel","Quantum","Vapor","Synth","Turbo","Photon","Lunar","Magnetic","Prism","Hyper","Cosmic","Fluoro","Signal","Rave"],
+b:["Pulse","Arcade","Lime","Sakura","Reef","Night","Candy","Violet","Bloom","Club","Mint","Rush","Sunset","Sky","Signal","Dragon","Matrix","Tunnel","Comet","Grid","Circuit","Nova","Lab","Storm","Wave","Core","Flash","City","Echo","Portal"],
+c:["Surge","Glow","Voltage","Beam","Spark","Pulse","Flux","Rush","Drift","Signal","Afterglow","Charge","Spectrum","Flash","Current","Orbit","Vortex","Frequency","Reactor","Motion"]
+},
+Dark:{
+a:["Midnight","Forest","Charcoal","Moonlit","Deep","Storm","Black","Nocturne","Gothic","Dark","Ink","Obsidian","Shadow","Coal","Atlantic","Night","Raven","Eclipse","Pine","Aubergine","Slate","Graphite","Moss","Cinder","Iron","Twilight","Phantom","Abyss","Harbor","Monsoon"],
+b:["Ocean","Depth","Ember","Slate","Aubergine","Pine","Moss","Lake","Plum","Terracotta","Horizon","Mint","Coral","Lavender","Night","Evergreen","Harbor","Stone","Valley","Grove","Cave","Peak","River","Garden","Dusk","Fjord","Temple","Forest","Basin","Cliff"],
+c:["Nocturne","Silence","Dusk","Shade","Echo","Mist","Afterdark","Hollow","Moon","Depth","Gloom","Velvet","Drift","Nightfall","Abyss","Whisper","Shadow","Tide","Veil","Ridge"]
+},
+Light:{
+a:["Ocean","Cloud","Warm","Pearl","Ivory","Nordic","Fresh","Blue","Soft","Milk","Sky","Misty","Clean","Buttercream","Calm","Rose","Sage","Porcelain","Snow","Linen","Morning","Alpine","Silver","Paper","Frost","Cream","Vanilla","Daylight","Breeze","Studio"],
+b:["Air","White","Linen","Garden","Blush","Snow","Paper","Porcelain","Sage","Tea","Studio","Violet","Mint","Day","Sand","Quartz","Meadow","Glass","Field","Room","Window","Canvas","Light","Foam","Harbor","Cloud","Avenue","Terrace","Bloom","Bay"],
+c:["Clarity","Dawn","Ease","Calm","Glow","Silence","Daybreak","Breeze","Shine","Stillness","Whisper","Softness","Morning","Drift","Halo","Muse","Horizon","Nest","Space","Aura"]
+}
+};
+
+const globalUsedNames = new Set();
+
+function makeName(category,index,usedNames){
+const words = nameWords[category];
+const totalB = words.b.length;
+const totalC = words.c.length;
+let attempt = 0;
+
+while(attempt < words.a.length * words.b.length * words.c.length){
+const n = index + attempt;
+const a = words.a[(n * 7 + category.length) % words.a.length];
+const b = words.b[(Math.floor(n / words.a.length) * 11 + n) % totalB];
+const c = words.c[(Math.floor(n / (words.a.length * totalB)) * 13 + n) % totalC];
+const name = `${a} ${b} ${c}`;
+
+if(!usedNames.has(name) && !globalUsedNames.has(name)){
+usedNames.add(name);
+globalUsedNames.add(name);
+return name;
+}
+attempt++;
+}
+
+/* Very unlikely fallback. Still no numbers. */
+const fallback = `${category} ${pick(words.a,index)} ${pick(words.b,index+9)} ${pick(words.c,index+19)} ${pick(words.c,index+29)}`;
+usedNames.add(fallback);
+globalUsedNames.add(fallback);
+return fallback;
+}
+
+const recipeOffset = {Pastel:12,Vintage:38,Luxury:215,Retro:4,Neon:280,Dark:198,Light:176};
+
+const paletteRecipes = {
+Pastel:[
+(h)=>[hslToHex(h,68,88),hslToHex(h+38,64,90),hslToHex(h+96,55,87),hslToHex(h+168,52,89)],
+(h)=>[hslToHex(h,72,84),hslToHex(h+20,58,92),hslToHex(h+210,48,86),hslToHex(h+250,62,90)],
+(h)=>[hslToHex(h,55,92),hslToHex(h+72,60,86),hslToHex(h+144,52,91),hslToHex(h+216,50,88)],
+(h)=>[hslToHex(h,76,88),hslToHex(h+110,42,93),hslToHex(h+185,62,84),hslToHex(h+310,56,90)],
+(h)=>[hslToHex(h,48,95),hslToHex(h+45,68,86),hslToHex(h+135,45,90),hslToHex(h+275,58,87)],
+(h)=>[hslToHex(h,70,91),hslToHex(h+155,66,86),hslToHex(h+200,50,93),hslToHex(h+330,64,88)]
+],
+Vintage:[
+(h)=>[hslToHex(h,28,26),hslToHex(h+14,34,42),hslToHex(h+34,36,60),hslToHex(h+54,26,78)],
+(h)=>[hslToHex(h,36,20),hslToHex(h+65,30,36),hslToHex(h+110,28,58),hslToHex(h+160,24,76)],
+(h)=>[hslToHex(h,22,32),hslToHex(h+28,42,44),hslToHex(h+180,26,50),hslToHex(h+210,22,82)],
+(h)=>[hslToHex(h,35,24),hslToHex(h+115,22,38),hslToHex(h+145,30,62),hslToHex(h+35,22,84)],
+(h)=>[hslToHex(h,18,28),hslToHex(h+40,38,48),hslToHex(h+92,32,65),hslToHex(h+150,18,80)],
+(h)=>[hslToHex(h,30,18),hslToHex(h+22,28,33),hslToHex(h+95,34,52),hslToHex(h+190,20,74)]
+],
+Luxury:[
+(h)=>[hslToHex(h,34,8),hslToHex(h+18,42,18),hslToHex(h+42,74,48),hslToHex(h+52,60,82)],
+(h)=>[hslToHex(h,46,11),hslToHex(h+120,48,24),hslToHex(45,70,52),hslToHex(45,72,84)],
+(h)=>[hslToHex(h,40,10),hslToHex(h+70,55,28),hslToHex(h+155,62,54),hslToHex(h+185,58,86)],
+(h)=>[hslToHex(h,26,14),hslToHex(h+35,48,32),hslToHex(h+210,46,62),hslToHex(h+250,38,88)],
+(h)=>[hslToHex(h,18,7),hslToHex(h+95,36,18),hslToHex(h+138,58,42),hslToHex(38,65,72)],
+(h)=>[hslToHex(h,52,12),hslToHex(h+12,42,22),hslToHex(h+190,58,48),hslToHex(h+215,50,83)]
+],
+Retro:[
+(h)=>[hslToHex(h,86,58),hslToHex(h+42,92,58),hslToHex(h+128,74,52),hslToHex(h+214,82,60)],
+(h)=>[hslToHex(h,75,48),hslToHex(h+180,76,54),hslToHex(h+55,88,72),hslToHex(h+305,70,70)],
+(h)=>[hslToHex(h,90,62),hslToHex(h+25,88,54),hslToHex(h+90,86,61),hslToHex(h+170,66,42)],
+(h)=>[hslToHex(h,60,30),hslToHex(h+40,74,60),hslToHex(h+80,86,76),hslToHex(h+160,52,56)],
+(h)=>[hslToHex(h,78,45),hslToHex(h+72,88,62),hslToHex(h+144,80,58),hslToHex(h+216,84,64)],
+(h)=>[hslToHex(h,82,56),hslToHex(h+145,70,45),hslToHex(h+245,78,62),hslToHex(h+315,72,70)]
+],
+Neon:[
+(h)=>[hslToHex(h,42,8),hslToHex(h+28,100,52),hslToHex(h+130,100,56),hslToHex(h+245,100,58)],
+(h)=>[hslToHex(h,64,10),hslToHex(h+180,100,50),hslToHex(h+310,100,54),hslToHex(h+64,100,60)],
+(h)=>[hslToHex(h,30,6),hslToHex(h+95,100,48),hslToHex(h+200,100,52),hslToHex(h+330,100,55)],
+(h)=>[hslToHex(h,70,12),hslToHex(h+45,100,58),hslToHex(h+150,95,50),hslToHex(h+270,100,62)],
+(h)=>[hslToHex(h,50,9),hslToHex(h+115,100,54),hslToHex(h+225,100,48),hslToHex(h+300,100,60)],
+(h)=>[hslToHex(h,65,7),hslToHex(h+15,100,50),hslToHex(h+185,100,58),hslToHex(h+255,95,64)]
+],
+Dark:[
+(h)=>[hslToHex(h,42,8),hslToHex(h+14,45,16),hslToHex(h+34,48,28),hslToHex(h+58,42,40)],
+(h)=>[hslToHex(h,34,11),hslToHex(h+80,40,18),hslToHex(h+150,45,30),hslToHex(h+215,35,52)],
+(h)=>[hslToHex(h,50,9),hslToHex(h+28,58,20),hslToHex(h+46,60,34),hslToHex(h+190,34,62)],
+(h)=>[hslToHex(h,26,12),hslToHex(h+100,36,20),hslToHex(h+130,44,35),hslToHex(h+165,36,54)],
+(h)=>[hslToHex(h,38,7),hslToHex(h+55,42,16),hslToHex(h+140,52,26),hslToHex(h+260,40,45)],
+(h)=>[hslToHex(h,45,10),hslToHex(h+180,40,22),hslToHex(h+205,48,36),hslToHex(h+230,38,57)]
+],
+Light:[
+(h)=>[hslToHex(h,30,98),hslToHex(h+20,28,93),hslToHex(h+44,35,84),hslToHex(h+64,52,34)],
+(h)=>[hslToHex(h,42,96),hslToHex(h+70,38,88),hslToHex(h+140,34,74),hslToHex(h+210,46,42)],
+(h)=>[hslToHex(h,22,97),hslToHex(h+15,55,88),hslToHex(h+30,66,72),hslToHex(h+42,58,34)],
+(h)=>[hslToHex(h,18,95),hslToHex(h+115,32,88),hslToHex(h+180,42,76),hslToHex(h+225,50,38)],
+(h)=>[hslToHex(h,36,96),hslToHex(h+55,44,86),hslToHex(h+95,40,72),hslToHex(h+155,48,35)],
+(h)=>[hslToHex(h,28,98),hslToHex(h+250,38,88),hslToHex(h+275,50,74),hslToHex(h+300,56,38)]
+]
+};
+
+function generateCategoryPalettes(category,count){
+const usedNames = new Set();
+const usedSignatures = new Set();
+const recipes = paletteRecipes[category];
+const output = [];
+let attempt = 0;
+
+while(output.length < count && attempt < count * 8){
+const i = attempt;
+const recipeIndex = i % recipes.length;
+const cycle = Math.floor(i / recipes.length);
+const hue = (recipeOffset[category] + (cycle * 137.508) + (recipeIndex * 47) + (seeded(i + category.length) * 26)) % 360;
+let colors = recipes[recipeIndex](hue);
+let signature = paletteSignature(colors);
+
+/* If a generated palette falls into an already-used visual bucket, rotate strongly. */
+let shiftTry = 0;
+while(usedSignatures.has(signature) && shiftTry < 12){
+const shiftedHue = (hue + 31 + shiftTry * 19) % 360;
+colors = recipes[(recipeIndex + shiftTry) % recipes.length](shiftedHue);
+signature = paletteSignature(colors);
+shiftTry++;
+}
+
+if(!usedSignatures.has(signature)){
+usedSignatures.add(signature);
+const name = makeName(category,output.length,usedNames);
+output.push({
+name,
+category,
+concept:`${category.toLowerCase()} recipe ${recipeIndex} hue ${Math.round(hue/10)*10}`,
+likes:0,
+slug:slugify(name),
+colors
+});
+}
+attempt++;
+}
+
+return output;
+}
+
+function mixPalettesByCategory(data){
+const groups = {};
+categories.forEach(category=>groups[category]=data.filter(p=>p.category===category));
+const mixed = [];
+let added = true;
+while(added){
+added = false;
+categories.forEach(category=>{
+if(groups[category].length){
+mixed.push(groups[category].shift());
+added = true;
+}
+});
+}
+return mixed;
+}
+
+function buildPalettes(){
+const all = [];
+categories.forEach(category=>{
+all.push(...generateCategoryPalettes(category,PALETTES_PER_CATEGORY));
+});
+return mixPalettesByCategory(all);
+}
+
+const basePalettes = buildPalettes();
+
+/* ==========================================
+DAILY PALETTE DEMO ENGINE FOR VERCEL
+This demonstrates the production idea before Hostinger/MySQL.
+- Creates 3 or 4 new palettes per day.
+- Today's palettes appear at scheduled times.
+- Previous days remain in the archive.
+- They get normal slugs, SEO pages, likes, sitemap entries.
+For final Hostinger production, these will be saved in MySQL by cron.
+========================================== */
+
+const dailyCategoryCycle = ["Pastel","Neon","Vintage","Luxury","Retro","Dark","Light"];
+const dailyUploadSlots = [
+{hour:9, minute:15},
+{hour:13, minute:40},
+{hour:17, minute:25},
+{hour:21, minute:5}
+];
+
+const dailyNameA = ["Aurora","Velvet","Solar","Lunar","Coral","Opal","Meadow","Prism","Ember","Lagoon","Orchid","Nimbus","Copper","Pearl","Saffron","Indigo","Cedar","Mango","Quartz","Sage","Marble","Dahlia","Cobalt","Jasmine","Willow","Aster","Citrine","Harbor","Peony","Basil","Topaz"];
+const dailyNameB = ["Whisper","Bloom","Pulse","Garden","Horizon","Drift","Muse","Glow","Breeze","Canvas","Signal","Meadow","Story","Vista","Charm","Dawn","Echo","Loom","Fable","Nest","Ribbon","Flare","Aura","Valley","Waltz","Mirage","Terrace","Field","Petal","Studio","Current"];
+const dailyNameC = ["Edition","Collection","Palette","Mood","Season","Moment","Sketch","Chapter","Scene","Daybreak","Nocturne","Harmony","Spectrum","Archive","Journal","Fountain","Voyage","Atelier","Gallery","Dream"];
+
+function dateKey(date){
+return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+
+function dailySeedFromDate(key,slot){
+let seed = slot * 97;
+for(let i=0;i<key.length;i++) seed += key.charCodeAt(i) * (i + 11);
+return seed;
+}
+
+function dailyPaletteColors(category,seed,variant=0){
+const hue = (seed * 137.508 + seeded(seed + variant * 19) * 96 + variant * 53) % 360;
+const style = variant % 5;
+
+if(style === 4){
+/* strong cross-category concept palette to avoid same-looking daily uploads */
+return [
+hslToHex(hue,72,18),
+hslToHex(hue+75,88,56),
+hslToHex(hue+168,70,78),
+hslToHex(hue+285,82,48)
+];
+}
+
+switch(category){
+case "Pastel":
+return style === 0
+? [hslToHex(hue,72,86),hslToHex(hue+58,54,94),hslToHex(hue+146,62,84),hslToHex(hue+252,46,90)]
+: [hslToHex(hue,50,95),hslToHex(hue+105,72,82),hslToHex(hue+198,38,90),hslToHex(hue+318,66,86)];
+case "Neon":
+return style === 0
+? [hslToHex(hue,55,7),hslToHex(hue+62,100,50),hslToHex(hue+176,100,57),hslToHex(hue+292,100,61)]
+: [hslToHex(hue,68,10),hslToHex(hue+18,100,55),hslToHex(hue+134,100,49),hslToHex(hue+222,98,64)];
+case "Vintage":
+return style === 0
+? [hslToHex(hue,30,22),hslToHex(hue+34,38,44),hslToHex(hue+96,30,64),hslToHex(hue+166,22,81)]
+: [hslToHex(hue,20,32),hslToHex(hue+112,28,38),hslToHex(hue+172,35,56),hslToHex(hue+236,18,78)];
+case "Luxury":
+return style === 0
+? [hslToHex(hue,38,8),hslToHex(hue+42,52,18),hslToHex(hue+128,70,44),hslToHex(42+variant*7,70,82)]
+: [hslToHex(hue,28,12),hslToHex(hue+86,54,25),hslToHex(hue+196,58,52),hslToHex(hue+246,42,86)];
+case "Retro":
+return style === 0
+? [hslToHex(hue,88,58),hslToHex(hue+52,92,60),hslToHex(hue+142,76,52),hslToHex(hue+232,84,62)]
+: [hslToHex(hue,72,42),hslToHex(hue+118,86,66),hslToHex(hue+205,74,48),hslToHex(hue+315,88,70)];
+case "Dark":
+return style === 0
+? [hslToHex(hue,42,7),hslToHex(hue+28,48,16),hslToHex(hue+76,52,31),hslToHex(hue+164,38,50)]
+: [hslToHex(hue,55,10),hslToHex(hue+122,44,20),hslToHex(hue+210,48,36),hslToHex(hue+294,36,58)];
+case "Light":
+return style === 0
+? [hslToHex(hue,28,97),hslToHex(hue+38,40,91),hslToHex(hue+94,45,78),hslToHex(hue+156,58,38)]
+: [hslToHex(hue,18,96),hslToHex(hue+132,35,88),hslToHex(hue+218,48,74),hslToHex(hue+300,56,42)];
+default:
+return [hslToHex(hue,70,55),hslToHex(hue+60,70,60),hslToHex(hue+130,65,62),hslToHex(hue+210,60,64)];
+}
+}
+
+function dailyPaletteName(seed,usedNames){
+let attempt = 0;
+while(attempt < 80){
+const a = dailyNameA[(seed + attempt * 3) % dailyNameA.length];
+const b = dailyNameB[(seed * 2 + attempt * 5) % dailyNameB.length];
+const c = dailyNameC[(seed * 3 + attempt * 7) % dailyNameC.length];
+const name = attempt % 2 === 0 ? `${a} ${b}` : `${a} ${b} ${c}`;
+if(!usedNames.has(name)){
+usedNames.add(name);
+return name;
+}
+attempt++;
+}
+const fallback = `${dailyNameA[seed % dailyNameA.length]} ${dailyNameB[(seed+9) % dailyNameB.length]} ${dailyNameC[(seed+17) % dailyNameC.length]}`;
+usedNames.add(fallback);
+return fallback;
+}
+
+function scheduledDateTime(date,slot){
+const item = dailyUploadSlots[slot];
+const d = new Date(date);
+d.setHours(item.hour,item.minute,0,0);
+return d;
+}
+
+function generateDailyPalettes(){
+const now = new Date();
+const usedNames = new Set(basePalettes.map(p=>p.name));
+const usedSlugs = new Set(basePalettes.map(p=>p.slug));
+const usedSignatures = new Set(basePalettes.map(p=>paletteSignature(p.colors)));
+const daily = [];
+/* Use a diverse comparison sample for fast Vercel preview. Production Hostinger cron will check against full MySQL data. */
+const comparisonPool = basePalettes.filter((_,index)=>index % 35 === 0);
+
+/* Previous 45 days are already uploaded, so the site has a daily archive. */
+for(let dayOffset=14; dayOffset>=0; dayOffset--){
+const day = new Date(now);
+day.setDate(now.getDate() - dayOffset);
+const key = dateKey(day);
+const palettesToday = (dailySeedFromDate(key,0) % 5 === 0) ? 4 : 3;
+
+for(let slot=0; slot<palettesToday; slot++){
+const uploadTime = scheduledDateTime(day,slot);
+if(dayOffset === 0 && now < uploadTime) continue;
+const baseSeed = dailySeedFromDate(key,slot);
+let accepted = null;
+
+for(let attempt=0; attempt<100; attempt++){
+const seed = baseSeed + attempt * 23;
+const category = dailyCategoryCycle[(seed + slot + attempt) % dailyCategoryCycle.length];
+const colors = dailyPaletteColors(category,seed,attempt);
+const signature = paletteSignature(colors);
+if(usedSignatures.has(signature)) continue;
+
+const name = dailyPaletteName(seed,usedNames);
+let slug = slugify(name);
+if(usedSlugs.has(slug)) slug = slugify(`${name} ${dailyNameC[(seed+attempt) % dailyNameC.length]}`);
+
+const candidate = {
+name,
+category,
+concept:`daily ${category.toLowerCase()} unique upload ${key}`,
+likes:0,
+slug,
+colors,
+source:'daily',
+createdAt:uploadTime.toISOString()
+};
+
+/* Strict visual check: reject if it looks too close to any existing or daily palette. */
+if(!isPaletteTooSimilar(candidate,comparisonPool,13)){
+accepted = candidate;
+usedSlugs.add(slug);
+usedSignatures.add(signature);
+break;
+}
+}
+
+if(accepted){
+daily.push(accepted);
+comparisonPool.push(accepted);
+}
+}
+}
+
+return daily.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+}
+
+const dailyPalettes = generateDailyPalettes();
+const palettes = [...dailyPalettes,...basePalettes];
+
+/* Remove internal comparison features before exposing palettes to frontend/API. */
+palettes.forEach(palette=>delete palette._features);
+
+console.log('Daily demo palettes:',dailyPalettes.length);
+console.log('Generated palette counts:',categories.reduce((acc,category)=>{
+acc[category] = palettes.filter(p=>p.category===category).length;
+return acc;
+},{}));
+
+/* Final safety checks */
+const seenNames = new Set();
+const seenColorSets = new Set();
+palettes.forEach(p=>{
+if(/\s+\d+$/.test(p.name)) console.warn('Numbered name found:',p.name);
+if(seenNames.has(p.name)) console.warn('Duplicate name:',p.name);
+seenNames.add(p.name);
+const key = p.colors.join('|');
+if(seenColorSets.has(key)) console.warn('Duplicate exact colors:',p.name);
+seenColorSets.add(key);
+});
+
+/* APP STATE */
+
+/*
+GLOBAL LIKES API
+For all visitors to share the same like counts, connect these endpoints on your backend:
+GET  /api/likes
+Response: { "palette-slug": 12, "another-slug": 5 }
+
+POST /api/likes/:slug
+Body: { visitorId: "unique-browser-id" }
+Response: { "slug": "palette-slug", "count": 13 }
+
+DELETE /api/likes/:slug
+Body: { visitorId: "unique-browser-id" }
+Response: { "slug": "palette-slug", "count": 12 }
+
+Important: Backend should prevent the same visitorId from liking the same palette multiple times and should decrement on unlike.
+*/
+const API_BASE = '/api';
+const LIKED_STORAGE_KEY = 'colorfiind-liked-palettes';
+const VISITOR_STORAGE_KEY = 'colorfiind-visitor-id';
+
+function getVisitorId(){
+let visitorId = localStorage.getItem(VISITOR_STORAGE_KEY);
+if(!visitorId){
+visitorId = 'visitor-' + cryptoRandomId();
+localStorage.setItem(VISITOR_STORAGE_KEY,visitorId);
+}
+return visitorId;
+}
+
+function cryptoRandomId(){
+try{
+const values = new Uint32Array(4);
+crypto.getRandomValues(values);
+return Array.from(values).map(v=>v.toString(36)).join('-');
+}catch(e){
+return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+}
+}
+
+function getLikedPalettes(){
+return JSON.parse(localStorage.getItem(LIKED_STORAGE_KEY) || '[]');
+}
+
+function setLikedPalettes(liked){
+localStorage.setItem(LIKED_STORAGE_KEY,JSON.stringify(liked));
+}
+
+function applyLikeCounts(likeMap){
+palettes.forEach(palette=>{
+palette.likes = Number(likeMap[palette.slug] || 0);
+});
+}
+
+async function loadGlobalLikes(){
+try{
+const response = await fetch(`${API_BASE}/likes`,{cache:'no-store'});
+if(!response.ok) throw new Error('Unable to load likes');
+const likeMap = await response.json();
+applyLikeCounts(likeMap);
+renderInfinite();
+}catch(error){
+console.warn('Global likes API not connected yet. Showing zero likes.',error);
+applyLikeCounts({});
+renderInfinite();
+}
+}
+
+async function sendLikeToServer(slug){
+const response = await fetch(`${API_BASE}/likes/${encodeURIComponent(slug)}`,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({visitorId:getVisitorId()})
+});
+if(!response.ok) throw new Error('Unable to save like');
+return response.json();
+}
+
+async function sendUnlikeToServer(slug){
+const response = await fetch(`${API_BASE}/likes/${encodeURIComponent(slug)}`,{
+method:'DELETE',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({visitorId:getVisitorId()})
+});
+if(!response.ok) throw new Error('Unable to remove like');
+return response.json();
+}
+
+let currentPalettes = [...palettes];
+let currentPage = 1;
+let itemsPerLoad = 24;
+let isLoading = false;
+let currentMode = 'all';
+
+const grid = document.getElementById('grid');
+const loader = document.getElementById('loader');
+const searchInput = document.getElementById('search');
+const resultsMeta = document.getElementById('resultsMeta');
+const copyToast = document.getElementById('copyToast');
+
+/* CARD TEMPLATE - SAME V8 ACTION STYLE */
+function createPaletteCard(palette,index,active){
+return `
+<div class="card" data-slug="${palette.slug}" title="Open ${palette.name} palette page">
+  <div class="palette">
+    <div class="color c1" style="background:${palette.colors[0]}"><span>${palette.colors[0]}</span></div>
+    <div class="color c2" style="background:${palette.colors[1]}"><span>${palette.colors[1]}</span></div>
+    <div class="color c3" style="background:${palette.colors[2]}"><span>${palette.colors[2]}</span></div>
+    <div class="color c4" style="background:${palette.colors[3]}"><span>${palette.colors[3]}</span></div>
+  </div>
+  <div class="info">
+    <div class="name">${palette.name}</div>
+    <div class="actions">
+      <span class="favorite ${active ? 'active' : ''}" onclick="event.stopPropagation();likePalette('${palette.slug}')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.35-9.5-8C.5 10 .9 5.5 5 4c2.3-.8 4.2.2 5 1.5C10.8 4.2 12.7 3.2 15 4c4.1 1.5 4.5 6 2.5 9-2.5 3.65-9.5 8-9.5 8z"/></svg>
+        ${palette.likes}
+      </span>
+      <span onclick="event.stopPropagation();copyLink('${palette.slug}',this)" title="Copy link">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+      </span>
+      <span onclick="event.stopPropagation();copyColors(${index},this)" title="Copy colors">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      </span>
+    </div>
+  </div>
+</div>`;
+}
+
+function createAdCard(position){return `<div class="ad-slot">Advertisement Space — native palette grid ad #${position}</div>`;}
+
+function updateResultsMeta(){const total=currentPalettes.length;const visible=Math.min(currentPage*itemsPerLoad,total);const label=currentMode==='favorites'?'collection palettes':'palettes';resultsMeta.textContent=`Showing ${visible.toLocaleString()} of ${total.toLocaleString()} ${label}`;}
+
+function renderInfinite(){
+const visiblePalettes = currentPalettes.slice(0,currentPage * itemsPerLoad);
+const likedPalettes = getLikedPalettes();
+let html = '';
+
+visiblePalettes.forEach((palette,index)=>{
+const active = likedPalettes.includes(palette.slug);
+html += createPaletteCard(palette,index,active);
+if((index + 1) % 32 === 0 && index + 1 < visiblePalettes.length){
+html += createAdCard(Math.floor((index + 1) / 32));
+}
+});
+
+if(html === ''){
+html = '<div class="empty">No palettes found.</div>';
+}
+
+grid.innerHTML = html;
+updateResultsMeta();
+}
+
+async function writeClipboard(text){
+try{
+await navigator.clipboard.writeText(text);
+return true;
+}catch(e){
+const textarea = document.createElement('textarea');
+textarea.value = text;
+textarea.style.position = 'fixed';
+textarea.style.left = '-9999px';
+document.body.appendChild(textarea);
+textarea.select();
+const ok = document.execCommand('copy');
+document.body.removeChild(textarea);
+return ok;
+}
+}
+
+async function copyColors(index,el){
+await writeClipboard(currentPalettes[index].colors.join('\n'));
+flashCheck(el,'Palette copied');
+}
+
+async function copyLink(slug,el){
+const url = window.location.origin + '/palette/' + slug;
+await writeClipboard(url);
+flashCheck(el,'Palette link copied');
+}
+
+function showToast(message){
+copyToast.textContent = message;
+copyToast.classList.add('show');
+clearTimeout(showToast.timer);
+showToast.timer = setTimeout(()=>copyToast.classList.remove('show'),1600);
+}
+
+function flashCheck(el,message='Copied'){
+const original = el.innerHTML;
+el.classList.add('copied-pulse');
+el.innerHTML = '✓';
+showToast(message);
+setTimeout(()=>{
+el.innerHTML = original;
+el.classList.remove('copied-pulse');
+},1200);
+}
+
+async function likePalette(slug){
+let likedPalettes = getLikedPalettes();
+const palette = palettes.find(item => item.slug === slug);
+const alreadyLiked = likedPalettes.includes(slug);
+
+if(alreadyLiked){
+likedPalettes = likedPalettes.filter(item => item !== slug);
+setLikedPalettes(likedPalettes);
+if(palette){
+palette.likes = Math.max(0,(Number(palette.likes) || 0) - 1);
+}
+renderInfinite();
+
+try{
+const result = await sendUnlikeToServer(slug);
+if(palette && typeof result.count !== 'undefined'){
+palette.likes = Math.max(0,Number(result.count) || 0);
+renderInfinite();
+}
+}catch(error){
+console.warn('Unlike saved locally only because API is not connected yet.',error);
+}
+return;
+}
+
+likedPalettes.push(slug);
+setLikedPalettes(likedPalettes);
+
+if(palette){
+palette.likes = (Number(palette.likes) || 0) + 1;
+}
+renderInfinite();
+
+try{
+const result = await sendLikeToServer(slug);
+if(palette && typeof result.count !== 'undefined'){
+palette.likes = Number(result.count) || 0;
+renderInfinite();
+}
+}catch(error){
+console.warn('Like saved locally only because API is not connected yet.',error);
+}
+}
+
+function showFavorites(){
+const likedPalettes = getLikedPalettes();
+currentPalettes = palettes.filter(palette => likedPalettes.includes(palette.slug));
+currentPage = 1;
+currentMode = 'favorites';
+clearCategoryActive();
+searchInput.value = '';
+scrollTopAndRender();
+closeSidebar();
+}
+
+function showAll(){
+currentPalettes = [...palettes];
+currentPage = 1;
+currentMode = 'all';
+setCategoryActive('all');
+searchInput.value = '';
+scrollTopAndRender();
+}
+
+function sortPopular(){
+currentPalettes = [...palettes].sort((a,b)=>b.likes-a.likes);
+currentPage = 1;
+currentMode = 'popular';
+clearCategoryActive();
+searchInput.value = '';
+scrollTopAndRender();
+}
+
+function shufflePalettes(){
+currentPalettes = [...palettes].sort(()=>Math.random()-0.5);
+currentPage = 1;
+currentMode = 'random';
+clearCategoryActive();
+searchInput.value = '';
+scrollTopAndRender();
+}
+
+function filterCategory(category,element){
+document.querySelectorAll('.category').forEach(cat=>cat.classList.remove('active'));
+element.classList.add('active');
+
+if(category === 'all'){
+currentPalettes = [...palettes];
+currentMode = 'all';
+}else{
+currentPalettes = palettes.filter(palette => palette.category === category);
+currentMode = category;
+}
+
+currentPage = 1;
+searchInput.value = '';
+scrollTopAndRender();
+closeSidebar();
+}
+
+function setCategoryActive(category){
+document.querySelectorAll('.category').forEach(cat=>{
+cat.classList.toggle('active', cat.textContent.trim().toLowerCase() === category.toLowerCase());
+});
+}
+
+function clearCategoryActive(){
+document.querySelectorAll('.category').forEach(cat=>cat.classList.remove('active'));
+}
+
+function setActiveNav(element){
+document.querySelectorAll('.nav-item').forEach(nav=>nav.classList.remove('active'));
+element.classList.add('active');
+}
+
+function scrollTopAndRender(){
+window.scrollTo({top:0,behavior:'smooth'});
+renderInfinite();
+}
+
+/* SEARCH ENGINE - simple stable V8-style search */
+let searchTimer;
+
+function getSearchBase(){
+if(categories.includes(currentMode)){
+return palettes.filter(palette => palette.category === currentMode);
+}
+if(currentMode === 'favorites'){
+const likedPalettes = getLikedPalettes();
+return palettes.filter(palette => likedPalettes.includes(palette.slug));
+}
+if(currentMode === 'popular'){
+return [...palettes].sort((a,b)=>b.likes-a.likes);
+}
+if(currentMode === 'random'){
+return [...currentPalettes];
+}
+return [...palettes];
+}
+
+searchInput.addEventListener('input',function(){
+clearTimeout(searchTimer);
+const query = this.value.trim().toLowerCase();
+
+searchTimer = setTimeout(()=>{
+const base = getSearchBase();
+
+if(query === ''){
+currentPalettes = base;
+}else{
+currentPalettes = base.filter(palette =>
+palette.name.toLowerCase().includes(query) ||
+palette.category.toLowerCase().includes(query) ||
+(palette.concept || '').toLowerCase().includes(query) ||
+palette.colors.join(' ').toLowerCase().includes(query)
+);
+}
+
+currentPage = 1;
+renderInfinite();
+},180);
+});
+
+/* INFINITE SCROLL */
+window.addEventListener('scroll',()=>{
+if(isLoading) return;
+const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 800;
+if(nearBottom && (currentPage * itemsPerLoad) < currentPalettes.length){
+isLoading = true;
+loader.style.display = 'block';
+requestAnimationFrame(()=>{
+setTimeout(()=>{
+currentPage++;
+renderInfinite();
+loader.style.display = 'none';
+isLoading = false;
+},120);
+});
+}
+});
+
+/* CARD CLICK: open SEO-friendly backend palette detail page */
+document.addEventListener('click',function(e){
+const card = e.target.closest('.card');
+if(!card) return;
+window.location.href = '/palette/' + card.dataset.slug;
+});
+
+/* DARK MODE */
+function toggleTheme(){
+const current = document.documentElement.getAttribute('data-theme');
+const btn = document.querySelector('.theme-toggle');
+
+if(current === 'dark'){
+document.documentElement.removeAttribute('data-theme');
+localStorage.setItem('theme','light');
+btn.innerHTML = '🌙 Dark Mode';
+}else{
+document.documentElement.setAttribute('data-theme','dark');
+localStorage.setItem('theme','dark');
+btn.innerHTML = '☀️ Light Mode';
+}
+}
+
+function loadSavedTheme(){
+const savedTheme = localStorage.getItem('theme');
+const btn = document.querySelector('.theme-toggle');
+if(savedTheme === 'dark'){
+document.documentElement.setAttribute('data-theme','dark');
+btn.innerHTML = '☀️ Light Mode';
+}else{
+document.documentElement.removeAttribute('data-theme');
+btn.innerHTML = '🌙 Dark Mode';
+}
+}
+
+/* MOBILE SIDEBAR */
+function openSidebar(){document.getElementById('sidebar').classList.add('show');document.getElementById('sidebarBackdrop').classList.add('show');document.body.classList.add('sidebar-open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('show');document.getElementById('sidebarBackdrop').classList.remove('show');document.body.classList.remove('sidebar-open');}
+function toggleSidebar(){const sidebar=document.getElementById('sidebar');sidebar.classList.contains('show')?closeSidebar():openSidebar();}
+
+document.addEventListener('click',function(e){
+const sidebar = document.getElementById('sidebar');
+const toggle = document.querySelector('.mobile-toggle');
+
+if(
+window.innerWidth < 1000 &&
+sidebar.classList.contains('show') &&
+!sidebar.contains(e.target) &&
+!toggle.contains(e.target)
+){
+closeSidebar();
+}
+});
+
+/* KEYBOARD SHORTCUT LIKE V10 */
+document.addEventListener('keydown',e=>{
+if(e.key === '/' && document.activeElement !== searchInput){
+e.preventDefault();
+searchInput.focus();
+}
+});
+
+/* SCROLL POSITION MEMORY */
+if(sessionStorage.getItem('colorfiind-scroll')){
+window.scrollTo(0,parseInt(sessionStorage.getItem('colorfiind-scroll')));
+}
+
+window.addEventListener('beforeunload',()=>{
+sessionStorage.setItem('colorfiind-scroll',window.scrollY);
+});
+
+/* INITIAL LOAD */
+loadSavedTheme();
+renderInfinite();
+loadGlobalLikes();
+
+console.log('ColorFiind V10 Corrected - V8 Style Loaded');
+console.log('Total Palettes:',palettes.length);
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0fd27722f147fa9',t:'MTc4MjE1MTI0Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
