@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/", "destination": "/api/app?path=" },
+    { "source": "/api/likes/:slug", "destination": "/api/app?path=api/likes/:slug" },
+    { "source": "/api/likes", "destination": "/api/app?path=api/likes" },
+    { "source": "/api/palettes", "destination": "/api/app?path=api/palettes" },
+    { "source": "/palette/:slug", "destination": "/api/app?path=palette/:slug" },
+    { "source": "/category/:category", "destination": "/api/app?path=category/:category" },
+    { "source": "/season/:season/:slug", "destination": "/api/app?path=season/:season/:slug" },
+    { "source": "/season/:season", "destination": "/api/app?path=season/:season" },
+    { "source": "/seasonal/:slug", "destination": "/api/app?path=seasonal/:slug" },
+    { "source": "/collection", "destination": "/api/app?path=collection" },
+    { "source": "/sitemap.xml", "destination": "/api/app?path=sitemap.xml" }
+  ]
+}
